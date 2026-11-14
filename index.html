@@ -8,86 +8,81 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
 <style>
-  /* Layout: one 90x50mm card, drawn to scale, type sized from the card's own width; actions sit below it. */
+  /* Concept: a clean printed card on a desk, and keyboard keycaps for every action.
+     Red belongs to the logo and the call key only. */
   :root {
-    --ground: #efe9ea;
-    --card: #ffffff;
+    --ground: #e6e8eb;      /* desk grey */
+    --card: #ffffff;        /* card stock */
     --ink: #1f1a1b;
-    --muted: #6d6265;
-    --line: #d9cfd1;
-    --brand: #e00024;
-    --brand-text: #c4001f;
+    --muted: #6b6f76;
+    --key: #f6f6f4;         /* keycap top */
+    --key-edge: #c5c9cf;    /* keycap side */
+    --brand: #e00024;       /* logo red */
+    --brand-edge: #a8001b;
     --on-brand: #ffffff;
-    --shadow: 0 1px 2px rgb(60 20 28 / .10), 0 18px 40px -18px rgb(60 20 28 / .28);
+    --focus: #1f1a1b;
+    --shadow: 0 1px 2px rgb(20 24 30 / .10), 0 18px 40px -18px rgb(20 24 30 / .30);
     --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --ground: #151112;
-      --card: #231d1f;
-      --ink: #f6f0f1;
-      --muted: #b3a7aa;
-      --line: #463a3d;
-      --brand-text: #ff7186;
-      --shadow: 0 18px 40px -18px rgb(0 0 0 / .7);
+      --ground: #121315;
+      --card: #1e2023;
+      --ink: #f2f2f0;
+      --muted: #a3a7ae;
+      --key: #2a2d31;
+      --key-edge: #0d0e10;
+      --focus: #f2f2f0;
+      --shadow: 0 18px 40px -18px rgb(0 0 0 / .8);
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --ground: #151112;
-    --card: #231d1f;
-    --ink: #f6f0f1;
-    --muted: #b3a7aa;
-    --line: #463a3d;
-    --brand-text: #ff7186;
-    --shadow: 0 18px 40px -18px rgb(0 0 0 / .7);
+    --ground: #121315;
+    --card: #1e2023;
+    --ink: #f2f2f0;
+    --muted: #a3a7ae;
+    --key: #2a2d31;
+    --key-edge: #0d0e10;
+    --focus: #f2f2f0;
+    --shadow: 0 18px 40px -18px rgb(0 0 0 / .8);
     color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
-  body { margin: 0; }
-  html, body { height: 100%; }
+  html, body { min-height: 100%; }
   body {
+    margin: 0;
     display: grid;
-    place-items: center;
-    padding-block: 24px;
+    justify-items: center;
+    align-content: start;   /* phone: stack from the top */
+    padding-top: max(24px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(32px, env(safe-area-inset-bottom, 0px));
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
     background: var(--ground);
     color: var(--ink);
     font-family: var(--sans);
   }
+  @media (min-width: 640px) and (min-height: 700px) {
+    body { min-height: 100vh; align-content: center; }  /* larger screens: centre it */
+  }
 
   .stack {
     display: grid;
-    gap: 20px;
+    gap: 22px;
     width: 100%;
-    max-width: 540px;
+    max-width: 520px;
     min-width: 0;
   }
 
+  /* ---------- Card: 90 x 50 mm, type sized from the card's own width ---------- */
   .sizer {
     container-type: inline-size;
     perspective: 900px;
   }
-
-  /* Korean standard card size: 90 x 50 mm */
-  .card {
-    aspect-ratio: 90 / 50;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 6.5cqw 7cqw;
-    background: var(--card);
-    border-radius: 1.2cqw;
-    box-shadow: var(--shadow);
-  }
-
-  /* Kinetic: 3D tilt toward the pointer, a glare that follows it, and floating content layers */
   .card {
     --rx: 0deg;
     --ry: 0deg;
@@ -95,6 +90,14 @@
     --gy: 50%;
     --glare: 0;
     position: relative;
+    aspect-ratio: 90 / 50;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6.5cqw 7cqw;
+    background: var(--card);
+    border-radius: 1.6cqw;
+    box-shadow: var(--shadow);
     transform: rotateX(var(--rx)) rotateY(var(--ry));
     transform-style: preserve-3d;
     transition: transform .6s cubic-bezier(.2, .9, .25, 1.25), box-shadow .6s ease;
@@ -102,44 +105,28 @@
   }
   .card.is-tilting {
     transition: transform .1s linear, box-shadow .3s ease;
-    box-shadow: 0 2px 4px rgb(60 20 28 / .10), 0 30px 60px -22px rgb(60 20 28 / .40);
+    box-shadow: 0 2px 4px rgb(20 24 30 / .10), 0 30px 60px -22px rgb(20 24 30 / .42);
   }
+  /* light where the pointer is, a faint shade away from it */
   .card::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    /* light where the pointer is, a faint shade away from it */
     background: radial-gradient(circle at var(--gx) var(--gy),
-      rgb(255 255 255 / .30), rgb(255 255 255 / 0) 35%, rgb(60 20 28 / .09) 100%);
+      rgb(255 255 255 / .30), rgb(255 255 255 / 0) 35%, rgb(20 24 30 / .09) 100%);
     opacity: var(--glare);
     transition: opacity .4s ease;
     pointer-events: none;
   }
   .card-top, .details { transform: translateZ(28px); }
 
-  /* Entrance: card rises in, then the content and the panels below follow */
-  @keyframes rise-in {
-    from { opacity: 0; transform: translateY(28px) rotateX(14deg); }
-    to { opacity: 1; transform: none; }
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3cqw;
   }
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: none; }
-  }
-  @keyframes pop-in {
-    0% { opacity: 0; transform: scale(.4) rotate(-12deg); }
-    70% { opacity: 1; transform: scale(1.08) rotate(2deg); }
-    100% { transform: none; }
-  }
-  .sizer { animation: rise-in .9s cubic-bezier(.2, .9, .25, 1) both; transform-style: preserve-3d; }
-  .company img { animation: pop-in .7s .35s cubic-bezier(.2, .9, .3, 1.2) both; }
-  .company span, .weather { animation: fade-up .6s .5s ease-out both; }
-  .person { animation: fade-up .6s .6s ease-out both; }
-  .phone { animation: fade-up .6s .7s ease-out both; }
-  .quote { animation: fade-up .7s .8s ease-out both; }
-  .actions { animation: fade-up .7s .95s ease-out both; }
-
   .company {
     display: flex;
     align-items: center;
@@ -156,209 +143,224 @@
     flex: none;
   }
 
-  .card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 3cqw;
-  }
-
-  /* Weather: icon + temperature, top-right of the card */
   .weather {
     display: flex;
     align-items: center;
     gap: 1.2cqw;
     margin: 0;
-    font-family: var(--mono);
-    font-size: max(13px, 3.8cqw);
+    font-size: max(14px, 3.9cqw);
     font-weight: 500;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
   }
+  .weather[hidden] { display: none; }
   .weather svg {
     display: block;
     width: max(20px, 6cqw);
     height: max(20px, 6cqw);
     flex: none;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
   }
-  .weather[hidden] { display: none; }
 
   .details {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 2cqw 4cqw;
+    display: grid;
+    gap: 1.6cqw;
   }
-
   .person {
     display: flex;
     align-items: baseline;
-    gap: 2.2cqw;
+    gap: 2.4cqw;
     margin: 0;
-    min-width: 0;
   }
   .name {
-    font-size: max(28px, 9.4cqw);
+    font-size: max(30px, 10cqw);
     font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: .06em;
+    line-height: 1.05;
+    letter-spacing: .04em;
   }
   .role {
     color: var(--muted);
-    font-size: max(13px, 3.5cqw);
+    font-size: max(14px, 3.8cqw);
     font-weight: 500;
   }
-
   .phone {
-    display: flex;
-    align-items: baseline;
-    gap: 1.6cqw;
     margin: 0;
-    font-family: var(--mono);
-    font-size: max(13px, 3.5cqw);
+    font-size: max(15px, 4.2cqw);
     font-weight: 500;
     font-variant-numeric: tabular-nums;
+    letter-spacing: .03em;
   }
-  .phone abbr {
-    color: var(--brand-text);
+
+  /* ---------- Quote: quiet text under the card, no box ---------- */
+  .quote {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 6px 14px;
+    margin: 0;
+    padding-inline: 4px;
+  }
+  .quote-message {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.65;
+    text-wrap: pretty;
+    word-break: keep-all;
+  }
+  .quote[aria-busy="true"] .quote-message { color: var(--muted); }
+  .quote-author {
+    grid-column: 1;
+    display: grid;
+    gap: 2px;
+    color: var(--muted);
+    font-size: 13px;
+    font-style: normal;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+  .quote-author strong {
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .quote .key-icon {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 40px;
+    height: 40px;
+  }
+
+  /* ---------- Keycaps ---------- */
+  .key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--key-edge);
+    border-radius: 10px;
+    background: var(--key);
+    color: var(--ink);
+    font: 500 16px/1 var(--sans);
     text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--key-edge), 0 6px 10px -6px rgb(0 0 0 / .35);
+    transition: transform .08s ease, box-shadow .08s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .key:active, .key.is-pressed {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--key-edge), 0 2px 4px -2px rgb(0 0 0 / .35);
+  }
+  .key:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 4px;
+  }
+  .key:disabled { cursor: progress; opacity: .6; }
+  .key svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+    flex: none;
+  }
+  .key-call {
+    width: 100%;
+    min-height: 56px;
+    border-color: var(--brand-edge);
+    background: var(--brand);
+    color: var(--on-brand);
+    font-size: 17px;
+    font-weight: 700;
+    box-shadow: 0 4px 0 var(--brand-edge), 0 8px 14px -8px rgb(168 0 27 / .6);
+  }
+  .key-call:active, .key-call.is-pressed {
+    box-shadow: 0 1px 0 var(--brand-edge), 0 2px 4px -2px rgb(168 0 27 / .6);
+  }
+  .key-icon {
+    width: 48px;
+    height: 48px;
   }
 
   .actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-  }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding-inline: 18px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: transparent;
-    color: var(--ink);
-    font: 500 15px/1 var(--sans);
-    text-decoration: none;
-    cursor: pointer;
-    transition: border-color .15s, background-color .15s;
-  }
-  .btn:hover { border-color: var(--muted); }
-  .btn.primary {
-    border-color: var(--brand);
-    background: var(--brand);
-    color: var(--on-brand);
-  }
-  .btn.primary:hover { border-color: var(--brand-text); }
-  .btn:focus-visible {
-    outline: 2px solid var(--brand-text);
-    outline-offset: 2px;
-  }
-  .status {
-    color: var(--muted);
-    font-size: 14px;
-  }
-
-  /* Share panel: opens under the action buttons */
-  .share {
     display: grid;
-    gap: 12px;
-    padding: 16px 18px;
-    border-radius: 6px;
-    background: var(--card);
-    animation: fade-up .3s ease-out both;
+    gap: 20px;
   }
-  .share[hidden] { display: none; }
-  .share-title {
+  .share-keys {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(36px, 1fr));
+    gap: 14px 6px;
     margin: 0;
-    font-size: 15px;
-    font-weight: 700;
+    padding: 0;
+    list-style: none;
   }
-  .share-grid {
+  .share-keys li {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    justify-items: center;
     gap: 8px;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;   /* a long caption must not widen its column */
   }
-  .share-grid .btn {
-    justify-content: center;
-    min-height: 40px;
-    padding-inline: 10px;
-    font-size: 14px;
+  .share-keys li[hidden] { display: none; }
+  .share-keys .key-icon {
+    width: 100%;
+    max-width: 48px;
+    height: auto;
+    aspect-ratio: 1;
   }
-  .share-grid .btn[hidden] { display: none; }
-  .share-main {
-    grid-column: 1 / -1;
-    border-color: var(--brand);
-    color: var(--brand-text);
+  .share-keys .caption {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    width: max-content;   /* overflows evenly on both sides when the column is narrow */
   }
-  .share-note {
-    margin: 0;
+  .note {
+    margin: -4px 0 0;
     color: var(--muted);
     font-size: 13px;
     line-height: 1.5;
   }
-  .share-note:empty { display: none; }
-  #share-toggle[aria-expanded="true"] {
-    border-color: var(--ink);
-  }
+  .note:empty { display: none; }
 
-  /* Quote of the day: loaded from the advice API, sits under the card */
-  .quote {
-    display: grid;
-    gap: 10px;
-    margin: 0;
-    padding: 18px 20px;
-    border-left: 3px solid var(--brand);
-    border-radius: 0 6px 6px 0;
-    background: var(--card);
+  /* ---------- One entrance moment: the card rises, the logo pops ---------- */
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(28px) rotateX(14deg); }
+    to { opacity: 1; transform: none; }
   }
-  .quote-message {
-    margin: 0;
-    font-size: 17px;
-    font-weight: 500;
-    line-height: 1.6;
-    text-wrap: pretty;
-    word-break: keep-all;
+  @keyframes pop-in {
+    0% { opacity: 0; transform: scale(.4) rotate(-12deg); }
+    70% { opacity: 1; transform: scale(1.08) rotate(2deg); }
+    100% { transform: none; }
   }
-  .quote-footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px 16px;
-  }
-  .quote-author {
-    color: var(--muted);
-    font-size: 14px;
-    font-style: normal;
-  }
-  .quote-author strong {
-    color: var(--ink);
-    font-weight: 700;
-  }
-  .quote .btn {
-    min-height: 36px;
-    padding-inline: 12px;
-    font-size: 14px;
-  }
-  .quote[aria-busy="true"] .quote-message { color: var(--muted); }
+  .sizer { animation: rise-in .9s cubic-bezier(.2, .9, .25, 1) both; transform-style: preserve-3d; }
+  .company img { animation: pop-in .7s .35s cubic-bezier(.2, .9, .3, 1.2) both; }
 
   @media (prefers-reduced-motion: reduce) {
-    .btn { transition: none; }
-    .sizer, .company img, .company span, .weather, .person, .phone, .quote, .actions, .share { animation: none; }
+    .sizer, .company img { animation: none; }
     .card { transform: none; transition: none; }
     .card::after { display: none; }
+    .key { transition: none; }
   }
 </style>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- outline icons: stroke = currentColor -->
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 7 9-7"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></symbol>
+    <!-- service marks: filled = currentColor -->
+    <symbol id="i-facebook" viewBox="0 0 24 24" fill="currentColor"><path d="M13.6 22v-8.2h2.8l.4-3.3h-3.2V8.4c0-.9.3-1.6 1.6-1.6h1.7V3.9a23 23 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3v2.4H7.4v3.3h2.8V22h3.4Z"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.3-8.3L1.8 3h6.4l4.4 5.8L17.8 3Zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5Z"/></symbol>
+    <symbol id="i-naver" viewBox="0 0 24 24" fill="currentColor"><path d="M15.6 12.5 8.1 2H2v20h6.4V11.5L15.9 22H22V2h-6.4v10.5Z"/></symbol>
+    <symbol id="i-line" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5C6.2 2.5 1.5 6.3 1.5 11c0 4.2 3.7 7.7 8.8 8.4.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.9-3.5 8-6a7.4 7.4 0 0 0 2.5-5.3c0-4.7-4.7-8.5-10.5-8.5Z"/><path fill="var(--key)" d="M6.2 13.6h2.1a.4.4 0 0 0 0-.8H6.6V8.9a.4.4 0 0 0-.8 0v4.3c0 .2.2.4.4.4Zm3.4 0a.4.4 0 0 0 .4-.4V8.9a.4.4 0 0 0-.8 0v4.3c0 .2.2.4.4.4Zm5 0a.4.4 0 0 0 .4-.4V8.9a.4.4 0 0 0-.8 0v2.7l-2.2-3a.4.4 0 0 0-.7.3v4.3a.4.4 0 0 0 .8 0v-2.7l2.2 3c.1.1.2.1.3.1Zm3.9-.8h-1.7v-1h1.7a.4.4 0 0 0 0-.8h-1.7v-1h1.7a.4.4 0 0 0 0-.8h-2.1a.4.4 0 0 0-.4.4v4.3c0 .2.2.4.4.4h2.1a.4.4 0 0 0 0-.8Z"/></symbol>
+  </defs>
+</svg>
 
 <main class="stack">
   <div class="sizer">
@@ -378,69 +380,74 @@
           <span class="name">홍길동</span>
           <span class="role">사원</span>
         </h1>
-        <p class="phone">
-          <abbr title="휴대전화">M</abbr>
-          <span id="phone-number">010-1234-5678</span>
-        </p>
+        <p class="phone">010-1234-5678</p>
       </div>
     </article>
   </div>
 
   <figure class="quote" id="quote" aria-live="polite" aria-busy="true">
     <blockquote class="quote-message" id="quote-message">명언을 불러오는 중…</blockquote>
-    <figcaption class="quote-footer">
-      <cite class="quote-author" id="quote-author"></cite>
-      <button class="btn" id="quote-next" type="button">다른 명언</button>
-    </figcaption>
+    <figcaption class="quote-author" id="quote-author"></figcaption>
+    <button class="key key-icon" id="quote-next" type="button" aria-label="다른 명언 보기" title="다른 명언">
+      <svg aria-hidden="true"><use href="#i-refresh"/></svg>
+    </button>
   </figure>
 
   <div class="actions">
-    <a class="btn primary" href="tel:01012345678">전화 걸기</a>
-    <button class="btn" id="copy-phone" type="button">번호 복사</button>
-    <button class="btn" id="share-toggle" type="button" aria-expanded="false" aria-controls="share-panel">공유하기</button>
-    <span class="status" id="copy-status" role="status"></span>
-  </div>
+    <a class="key key-call" href="tel:01012345678">
+      <svg aria-hidden="true"><use href="#i-phone"/></svg>
+      전화 걸기
+    </a>
 
-  <section class="share" id="share-panel" aria-labelledby="share-title" hidden>
-    <h2 class="share-title" id="share-title">명함 공유하기</h2>
-    <div class="share-grid">
-      <button class="btn share-main" id="share-native" type="button" hidden>앱으로 공유 (카카오톡 등)</button>
-      <button class="btn" id="share-copy" type="button">링크 복사</button>
-      <a class="btn" id="share-email">이메일</a>
-      <a class="btn" id="share-sms" hidden>문자</a>
-      <a class="btn" id="share-facebook" target="_blank" rel="noopener">페이스북</a>
-      <a class="btn" id="share-x" target="_blank" rel="noopener">X (트위터)</a>
-      <a class="btn" id="share-naver" target="_blank" rel="noopener">네이버</a>
-      <a class="btn" id="share-line" target="_blank" rel="noopener">라인</a>
-    </div>
-    <p class="share-note" id="share-note" role="status"></p>
-  </section>
+    <ul class="share-keys" aria-label="명함 공유">
+      <li id="share-native-item" hidden>
+        <button class="key key-icon" id="share-native" type="button" aria-label="앱으로 공유 (카카오톡 등)" title="앱으로 공유">
+          <svg aria-hidden="true"><use href="#i-share"/></svg>
+        </button>
+        <span class="caption" aria-hidden="true">공유</span>
+      </li>
+      <li>
+        <button class="key key-icon" id="share-copy" type="button" aria-label="링크 복사" title="링크 복사">
+          <svg aria-hidden="true"><use href="#i-link"/></svg>
+        </button>
+        <span class="caption" aria-hidden="true">링크</span>
+      </li>
+      <li>
+        <a class="key key-icon share-link" id="share-email" aria-label="이메일로 공유" title="이메일">
+          <svg aria-hidden="true"><use href="#i-mail"/></svg>
+        </a>
+        <span class="caption" aria-hidden="true">메일</span>
+      </li>
+      <li>
+        <a class="key key-icon share-link" id="share-facebook" target="_blank" rel="noopener" aria-label="페이스북으로 공유" title="페이스북">
+          <svg aria-hidden="true"><use href="#i-facebook"/></svg>
+        </a>
+        <span class="caption" aria-hidden="true">페이스북</span>
+      </li>
+      <li>
+        <a class="key key-icon share-link" id="share-x" target="_blank" rel="noopener" aria-label="X(트위터)로 공유" title="X">
+          <svg aria-hidden="true"><use href="#i-x"/></svg>
+        </a>
+        <span class="caption" aria-hidden="true">X</span>
+      </li>
+      <li>
+        <a class="key key-icon share-link" id="share-naver" target="_blank" rel="noopener" aria-label="네이버로 공유" title="네이버">
+          <svg aria-hidden="true"><use href="#i-naver"/></svg>
+        </a>
+        <span class="caption" aria-hidden="true">네이버</span>
+      </li>
+      <li>
+        <a class="key key-icon share-link" id="share-line" target="_blank" rel="noopener" aria-label="라인으로 공유" title="라인">
+          <svg aria-hidden="true"><use href="#i-line"/></svg>
+        </a>
+        <span class="caption" aria-hidden="true">라인</span>
+      </li>
+    </ul>
+    <p class="note" id="share-note" role="status"></p>
+  </div>
 </main>
 
 <script>
-  const number = document.getElementById("phone-number");
-  const status = document.getElementById("copy-status");
-
-  function selectNumber() {
-    const range = document.createRange();
-    range.selectNodeContents(number);
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-    status.textContent = "번호를 선택했습니다. Ctrl+C로 복사하세요.";
-  }
-
-  document.getElementById("copy-phone").addEventListener("click", () => {
-    if (!navigator.clipboard) {
-      selectNumber();
-      return;
-    }
-    navigator.clipboard.writeText(number.textContent).then(
-      () => { status.textContent = "번호를 복사했습니다."; },
-      selectNumber
-    );
-  });
-
   // 명언 API: { message, author, authorProfile }
   const ADVICE_URL = "https://kradvice-pitca.vercel.app/api/advice";
   const quoteBox = document.getElementById("quote");
@@ -461,7 +468,11 @@
       const name = document.createElement("strong");
       name.textContent = data.author;
       quoteAuthor.append(name);
-      if (data.authorProfile) quoteAuthor.append(` · ${data.authorProfile}`);
+      if (data.authorProfile && data.authorProfile.trim() !== "-") {
+        const profile = document.createElement("span");
+        profile.textContent = data.authorProfile;
+        quoteAuthor.append(profile);
+      }
     } catch (error) {
       quoteMessage.textContent = "명언을 불러오지 못했습니다. 잠시 후 다시 시도하세요.";
       quoteAuthor.textContent = "";
@@ -529,7 +540,7 @@
 
       const [icon, label] = describeWeather(current.weather_code, current.is_day === 1);
       const temp = `${Math.round(current.temperature_2m)}°`;
-      weatherIcon.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[icon]}</svg>`;
+      weatherIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[icon]}</svg>`;
       weatherTemp.textContent = temp;
       weatherBox.setAttribute("aria-label", `현재 날씨 ${label}, ${temp}C`);
       weatherBox.title = label;
@@ -583,15 +594,12 @@
   const shareUrl = location.href.split("#")[0];
   const shareTitle = "평촌아이티 홍길동 사원 명함";
   const shareText = "평촌아이티 홍길동 사원의 온라인 명함입니다.";
-  const shareToggle = document.getElementById("share-toggle");
-  const sharePanel = document.getElementById("share-panel");
   const shareNote = document.getElementById("share-note");
   const enc = encodeURIComponent;
   const isLocalFile = location.protocol === "file:";
 
   const shareLinks = {
     "share-email": `mailto:?subject=${enc(shareTitle)}&body=${enc(`${shareText}\n${shareUrl}`)}`,
-    "share-sms": `sms:?&body=${enc(`${shareText} ${shareUrl}`)}`,
     "share-facebook": `https://www.facebook.com/sharer/sharer.php?u=${enc(shareUrl)}`,
     "share-x": `https://x.com/intent/tweet?text=${enc(shareText)}&url=${enc(shareUrl)}`,
     "share-naver": `https://share.naver.com/web/shareView?url=${enc(shareUrl)}&title=${enc(shareTitle)}`,
@@ -601,21 +609,19 @@
     document.getElementById(id).href = href;
   }
 
-  // 휴대폰 기본 공유 창(카카오톡·메시지 등)은 지원하는 브라우저에서만 보여 줍니다
-  if (navigator.share) document.getElementById("share-native").hidden = false;
-  // 문자는 휴대폰처럼 터치 화면에서만 보여 줍니다
-  if (window.matchMedia("(pointer: coarse)").matches) document.getElementById("share-sms").hidden = false;
+  // 내 컴퓨터에서 연 페이지는 다른 사람이 열 수 없으므로 공유할 때 알려 줍니다
+  function warnIfLocal() {
+    if (isLocalFile) {
+      shareNote.textContent = "지금은 내 컴퓨터에서 연 페이지라 다른 사람이 이 주소를 열 수 없습니다. GitHub Pages 주소로 연 뒤 공유하세요.";
+    }
+  }
+  document.querySelectorAll(".share-link").forEach((link) => link.addEventListener("click", warnIfLocal));
 
-  shareToggle.addEventListener("click", () => {
-    const open = sharePanel.hidden;
-    sharePanel.hidden = !open;
-    shareToggle.setAttribute("aria-expanded", String(open));
-    shareNote.textContent = isLocalFile
-      ? "지금은 내 컴퓨터에서 연 페이지라 다른 사람이 이 주소를 열 수 없습니다. GitHub Pages 주소로 연 뒤 공유하세요."
-      : "";
-  });
+  // 휴대폰 기본 공유 창(카카오톡·문자 등)은 지원하는 브라우저에서만 보여 줍니다
+  if (navigator.share) document.getElementById("share-native-item").hidden = false;
 
   document.getElementById("share-native").addEventListener("click", async () => {
+    warnIfLocal();
     try {
       await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
     } catch (error) {
@@ -628,6 +634,7 @@
     try {
       await navigator.clipboard.writeText(shareUrl);
       shareNote.textContent = "명함 링크를 복사했습니다. 원하는 곳에 붙여 넣으세요.";
+      warnIfLocal();
     } catch (error) {
       window.prompt("아래 링크를 복사하세요.", shareUrl);
     }
