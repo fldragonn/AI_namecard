@@ -100,6 +100,38 @@
     flex: none;
   }
 
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3cqw;
+  }
+
+  /* Weather: icon + temperature, top-right of the card */
+  .weather {
+    display: flex;
+    align-items: center;
+    gap: 1.2cqw;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: max(13px, 3.8cqw);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .weather svg {
+    display: block;
+    width: max(20px, 6cqw);
+    height: max(20px, 6cqw);
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .weather[hidden] { display: none; }
+
   .details {
     display: flex;
     flex-wrap: wrap;
@@ -229,10 +261,16 @@
 <main class="stack">
   <div class="sizer">
     <article class="card" aria-label="평촌아이티 홍길동 사원 명함">
-      <p class="company">
-        <img src="logo.png" alt="평촌아이티 로고" width="489" height="489">
-        <span>평촌아이티</span>
-      </p>
+      <div class="card-top">
+        <p class="company">
+          <img src="logo.png" alt="평촌아이티 로고" width="489" height="489">
+          <span>평촌아이티</span>
+        </p>
+        <p class="weather" id="weather" hidden>
+          <span id="weather-icon"></span>
+          <span id="weather-temp"></span>
+        </p>
+      </div>
       <div class="details">
         <h1 class="person">
           <span class="name">홍길동</span>
@@ -317,6 +355,73 @@
 
   quoteNext.addEventListener("click", loadQuote);
   loadQuote();
+
+  // 날씨 (Open-Meteo): 내 위치 → 실패하면 평촌(안양)
+  const DEFAULT_PLACE = { latitude: 37.39, longitude: 126.96 };
+  const weatherBox = document.getElementById("weather");
+  const weatherIcon = document.getElementById("weather-icon");
+  const weatherTemp = document.getElementById("weather-temp");
+
+  const CLOUD = "M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.24";
+  const ICONS = {
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+    moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+    cloudSun: '<path d="M12 2v2M4.93 4.93l1.41 1.41M20 12h2M19.07 4.93l-1.41 1.41M15.95 12.65a4 4 0 0 0-5.93-4.13"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>',
+    cloudMoon: '<path d="M13 16a3 3 0 1 1 0 6H7a5 5 0 1 1 4.9-6Z"/><path d="M10.1 9A6 6 0 0 1 16 4a4 4 0 0 0 6 6 6 6 0 0 1-3 5.2"/>',
+    cloud: '<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
+    fog: `<path d="${CLOUD}"/><path d="M16 17H7M17 21H9"/>`,
+    drizzle: `<path d="${CLOUD}"/><path d="M8 19v1M8 14v1M16 19v1M16 14v1M12 21v1M12 16v1"/>`,
+    rain: `<path d="${CLOUD}"/><path d="M16 14v6M8 14v6M12 16v6"/>`,
+    snow: `<path d="${CLOUD}"/><path d="M8 15h.01M8 19h.01M12 17h.01M12 21h.01M16 15h.01M16 19h.01"/>`,
+    storm: '<path d="M6 16.33A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.97"/><path d="m13 12-3 5h4l-3 5"/>',
+  };
+
+  // WMO 날씨 코드 → 아이콘, 설명
+  function describeWeather(code, isDay) {
+    if (code === 0) return [isDay ? "sun" : "moon", "맑음"];
+    if (code <= 2) return [isDay ? "cloudSun" : "cloudMoon", "구름 조금"];
+    if (code === 3) return ["cloud", "흐림"];
+    if (code <= 48) return ["fog", "안개"];
+    if (code <= 57) return ["drizzle", "이슬비"];
+    if (code <= 67 || (code >= 80 && code <= 82)) return ["rain", "비"];
+    if (code <= 77 || code === 85 || code === 86) return ["snow", "눈"];
+    return ["storm", "뇌우"];
+  }
+
+  function getPosition() {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) return resolve(DEFAULT_PLACE);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve(pos.coords),
+        () => resolve(DEFAULT_PLACE),
+        { timeout: 5000, maximumAge: 30 * 60 * 1000 }
+      );
+    });
+  }
+
+  async function loadWeather() {
+    try {
+      const { latitude, longitude } = await getPosition();
+      const url = "https://api.open-meteo.com/v1/forecast"
+        + `?latitude=${latitude.toFixed(2)}&longitude=${longitude.toFixed(2)}`
+        + "&current=temperature_2m,weather_code,is_day&timezone=auto";
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(response.status);
+      const { current } = await response.json();
+
+      const [icon, label] = describeWeather(current.weather_code, current.is_day === 1);
+      const temp = `${Math.round(current.temperature_2m)}°`;
+      weatherIcon.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[icon]}</svg>`;
+      weatherTemp.textContent = temp;
+      weatherBox.setAttribute("aria-label", `현재 날씨 ${label}, ${temp}C`);
+      weatherBox.title = label;
+      weatherBox.hidden = false;
+    } catch (error) {
+      weatherBox.hidden = true;
+    }
+  }
+
+  loadWeather();
 </script>
 </body>
 </html>
