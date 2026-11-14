@@ -1,390 +1,322 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>평촌아이티컴퓨터학원 - 온라인 명함</title>
-  
-  <!-- SEO 메타 태그 -->
-  <meta name="description" content="1984년 개원 이래 컴퓨터 교육을 전문으로 하는 평촌아이티컴퓨터학원의 공식 온라인 명함입니다.">
-  <meta name="keywords" content="평촌아이티컴퓨터학원, 컴퓨터학원, 평촌컴퓨터학원, 온라인명함, 코딩교육, IT교육">
-  <meta property="og:title" content="평촌아이티컴퓨터학원 - 온라인 명함">
-  <meta property="og:description" content="1984년 개원 이래 컴퓨터 교육을 전문으로 하는 평촌아이티컴퓨터학원입니다.">
-  <meta property="og:type" content="website">
-
-  <!-- 구글 폰트 적용 (한글: Gamja Flower, 영문: Roboto Condensed 100) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Roboto+Condensed:wght@100;400;700&display=swap" rel="stylesheet">
-
-  <style>
-    /* 디자인 시스템 및 CSS 변수 정의 */
-    :root {
-      --primary-color: #E50018; /* 학원 공식 로고 레드 */
-      --primary-hover: #C20014;
-      --bg-gradient-start: #e8f0fe; /* 신뢰감을 주는 부드러운 파스텔 블루 */
-      --bg-gradient-end: #c7dcfc;
-      --card-bg: rgba(255, 255, 255, 0.95); /* 미세 투명도가 가미된 카드 배경 */
-      --text-main: #2d3748; /* 가독성을 위한 깊이 있는 슬레이트 다크 */
-      --text-muted: #718096;
-      --shadow-normal: 0 15px 35px rgba(103, 118, 142, 0.18), 0 5px 15px rgba(103, 118, 142, 0.1);
-      --shadow-hover: 0 30px 60px rgba(103, 118, 142, 0.3), 0 15px 25px rgba(103, 118, 142, 0.18);
-      --border-light: rgba(255, 255, 255, 0.7);
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="logo.png">
+<title>평촌아이티 홍길동</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  /* Layout: one 90x50mm card, drawn to scale, type sized from the card's own width; actions sit below it. */
+  :root {
+    --ground: #efe9ea;
+    --card: #ffffff;
+    --ink: #1f1a1b;
+    --muted: #6d6265;
+    --line: #d9cfd1;
+    --brand: #e00024;
+    --brand-text: #c4001f;
+    --on-brand: #ffffff;
+    --shadow: 0 1px 2px rgb(60 20 28 / .10), 0 18px 40px -18px rgb(60 20 28 / .28);
+    --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #151112;
+      --card: #231d1f;
+      --ink: #f6f0f1;
+      --muted: #b3a7aa;
+      --line: #463a3d;
+      --brand-text: #ff7186;
+      --shadow: 0 18px 40px -18px rgb(0 0 0 / .7);
+      color-scheme: dark;
     }
+  }
+  :root[data-theme="dark"] {
+    --ground: #151112;
+    --card: #231d1f;
+    --ink: #f6f0f1;
+    --muted: #b3a7aa;
+    --line: #463a3d;
+    --brand-text: #ff7186;
+    --shadow: 0 18px 40px -18px rgb(0 0 0 / .7);
+    color-scheme: dark;
+  }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Gamja Flower", cursive, sans-serif; /* 기본 한글 글꼴 적용 */
-    }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  html, body { height: 100%; }
+  body {
+    display: grid;
+    place-items: center;
+    padding-block: 24px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+  }
 
-    /* 영문 및 숫자 전용 세련된 Roboto Condensed 폰트 스타일 */
-    .font-en {
-      font-family: "Roboto Condensed", sans-serif;
-      font-weight: 100;
-    }
+  .stack {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    max-width: 540px;
+    min-width: 0;
+  }
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(circle at 50% 50%, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-      padding: 20px;
-      overflow-x: hidden;
-    }
+  .sizer { container-type: inline-size; }
 
-    /* 입체감이 돋보이는 명함 카드 */
-    .card-container {
-      position: relative;
-      width: 100%;
-      max-width: 380px;
-      perspective: 1000px; /* 3D 입체 효과 구현을 위한 원근감 설정 */
-    }
+  /* Korean standard card size: 90 x 50 mm */
+  .card {
+    aspect-ratio: 90 / 50;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6.5cqw 7cqw;
+    background: var(--card);
+    border-radius: 1.2cqw;
+    box-shadow: var(--shadow);
+  }
 
-    .card {
-      background: var(--card-bg);
-      border-radius: 28px;
-      padding: 35px 30px;
-      box-shadow: var(--shadow-normal);
-      border: 1px solid var(--border-light);
-      text-align: center;
-      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s ease;
-      position: relative;
-      overflow: hidden;
-    }
+  .company {
+    display: flex;
+    align-items: center;
+    gap: 2.6cqw;
+    margin: 0;
+    font-size: max(15px, 4.4cqw);
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+  .company img {
+    display: block;
+    width: 9.6cqw;
+    height: 9.6cqw;
+    flex: none;
+  }
 
-    /* 마우스 호버 시 붕 떠오르는 입체 효과 */
-    .card-container:hover .card {
-      transform: translateY(-10px) rotateX(2deg) rotateY(-2deg);
-      box-shadow: var(--shadow-hover);
-    }
+  .details {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2cqw 4cqw;
+  }
 
-    /* 카드 배경에 은은하게 들어간 글로우 효과 */
-    .card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(229, 0, 24, 0.03) 0%, transparent 70%);
-      pointer-events: none;
-    }
+  .person {
+    display: flex;
+    align-items: baseline;
+    gap: 2.2cqw;
+    margin: 0;
+    min-width: 0;
+  }
+  .name {
+    font-size: max(28px, 9.4cqw);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: .06em;
+  }
+  .role {
+    color: var(--muted);
+    font-size: max(13px, 3.5cqw);
+    font-weight: 500;
+  }
 
-    /* 학원 로고 영역 스타일 */
-    .logo-area {
-      margin-top: 5px;
-      margin-bottom: 25px;
-      display: inline-block;
-      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
-    }
+  .phone {
+    display: flex;
+    align-items: baseline;
+    gap: 1.6cqw;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: max(13px, 3.5cqw);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .phone abbr {
+    color: var(--brand-text);
+    text-decoration: none;
+  }
 
-    /* 로고 이미지 크기 조절 */
-    .logo-img {
-      display: block;
-      width: 80px; /* 명함에 맞춘 정사각형 로고 가로 크기 */
-      height: 80px; /* 명함에 맞춘 정사각형 로고 세로 크기 */
-      border-radius: 18px; /* 모서리 둥글게 깎기 */
-      object-fit: cover;
-    }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 18px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ink);
+    font: 500 15px/1 var(--sans);
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color .15s, background-color .15s;
+  }
+  .btn:hover { border-color: var(--muted); }
+  .btn.primary {
+    border-color: var(--brand);
+    background: var(--brand);
+    color: var(--on-brand);
+  }
+  .btn.primary:hover { border-color: var(--brand-text); }
+  .btn:focus-visible {
+    outline: 2px solid var(--brand-text);
+    outline-offset: 2px;
+  }
+  .status {
+    color: var(--muted);
+    font-size: 14px;
+  }
 
-    /* 마우스 롤오버 시 회전 및 입체 그림자 효과 */
-    .card-container:hover .logo-area {
-      transform: scale(1.06) rotate(3deg);
-      filter: drop-shadow(0 10px 20px rgba(229, 0, 24, 0.25));
-    }
+  /* Quote of the day: loaded from the advice API, sits under the card */
+  .quote {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 18px 20px;
+    border-left: 3px solid var(--brand);
+    border-radius: 0 6px 6px 0;
+    background: var(--card);
+  }
+  .quote-message {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.6;
+    text-wrap: pretty;
+    word-break: keep-all;
+  }
+  .quote-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+  }
+  .quote-author {
+    color: var(--muted);
+    font-size: 14px;
+    font-style: normal;
+  }
+  .quote-author strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .quote .btn {
+    min-height: 36px;
+    padding-inline: 12px;
+    font-size: 14px;
+  }
+  .quote[aria-busy="true"] .quote-message { color: var(--muted); }
 
-    /* 학원 이름 및 소개 */
-    .academy-name {
-      font-size: 1.45rem;
-      font-weight: 800;
-      color: var(--text-main);
-      letter-spacing: -0.5px;
-      margin-bottom: 8px;
-    }
-
-    .academy-intro {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 30px;
-      word-break: keep-all;
-    }
-
-    /* 분구선 (Divider) */
-    .divider {
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.08) 20%, rgba(0, 0, 0, 0.08) 80%, transparent);
-      margin-bottom: 25px;
-    }
-
-    /* 상세 정보 영역 */
-    .info-list {
-      list-style: none;
-      text-align: left;
-      margin-bottom: 30px;
-    }
-
-    .info-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 18px;
-      padding: 6px 8px;
-      border-radius: 12px;
-      transition: background-color 0.3s ease;
-    }
-
-    .info-item:hover {
-      background-color: rgba(0, 0, 0, 0.02);
-    }
-
-    /* 아이콘 원형 배경 스타일 */
-    .info-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background-color: rgba(229, 0, 24, 0.06);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-right: 15px;
-      flex-shrink: 0;
-      color: var(--primary-color);
-      transition: transform 0.3s ease;
-    }
-
-    .info-item:hover .info-icon {
-      transform: scale(1.1);
-      background-color: var(--primary-color);
-      color: #ffffff;
-    }
-
-    .info-icon svg {
-      width: 18px;
-      height: 18px;
-      fill: currentColor;
-    }
-
-    .info-details {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .info-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 2px;
-    }
-
-    .info-value {
-      font-size: 0.95rem;
-      color: var(--text-main);
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-
-    a.info-value:hover {
-      color: var(--primary-color);
-    }
-
-    /* 하단 액션 버튼 그룹 (모바일에서 전화 걸기 극대화) */
-    .action-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .btn {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      padding: 14px 16px;
-      border-radius: 16px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      cursor: pointer;
-    }
-
-    /* 메인 전화 걸기 버튼 */
-    .btn-call {
-      background-color: var(--primary-color);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(229, 0, 24, 0.25);
-    }
-
-    .btn-call:hover {
-      background-color: var(--primary-hover);
-      box-shadow: 0 6px 16px rgba(229, 0, 24, 0.35);
-      transform: translateY(-2px);
-    }
-
-    .btn-call:active {
-      transform: translateY(1px);
-    }
-
-    /* 서브 홈페이지 버튼 */
-    .btn-web {
-      background-color: #f2f2f7;
-      color: var(--text-main);
-    }
-
-    .btn-web:hover {
-      background-color: #e5e5ea;
-      transform: translateY(-2px);
-    }
-
-    .btn-web:active {
-      transform: translateY(1px);
-    }
-
-    .btn svg {
-      width: 16px;
-      height: 16px;
-      margin-right: 8px;
-      fill: currentColor;
-    }
-
-    /* 1984 전통 및 품질 보증 배지 */
-    .badge {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: linear-gradient(135deg, #ffd700, #ffa500);
-      color: #ffffff;
-      font-size: 0.65rem;
-      font-weight: 800;
-      padding: 5px 10px;
-      border-radius: 20px;
-      box-shadow: 0 4px 8px rgba(255, 165, 0, 0.2);
-      letter-spacing: 0.5px;
-      transform: rotate(2deg);
-    }
-  </style>
+  @media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+  }
+</style>
 </head>
 <body>
 
-  <div class="card-container">
-    <!-- 명함 본체 -->
-    <div class="card">
-      <!-- 1984년 역사 배지 -->
-      <span class="badge font-en" style="font-weight: 700;">SINCE 1984</span>
-
-      <!-- 학원 원본 로고 이미지 로드 -->
-      <div class="logo-area">
-        <img src="images/logo_square.jpg" alt="평촌아이티컴퓨터학원 로고" class="logo-img">
+<main class="stack">
+  <div class="sizer">
+    <article class="card" aria-label="평촌아이티 홍길동 사원 명함">
+      <p class="company">
+        <img src="logo.png" alt="평촌아이티 로고" width="489" height="489">
+        <span>평촌아이티</span>
+      </p>
+      <div class="details">
+        <h1 class="person">
+          <span class="name">홍길동</span>
+          <span class="role">사원</span>
+        </h1>
+        <p class="phone">
+          <abbr title="휴대전화">M</abbr>
+          <span id="phone-number">010-1234-5678</span>
+        </p>
       </div>
-
-      <!-- 학원 기본 정보 -->
-      <h1 class="academy-name">평촌아이티컴퓨터학원</h1>
-      <p class="academy-intro">1984년 개원 이래 컴퓨터 교육을 전문으로 해온 역사 깊은 IT 인재 육성의 요람입니다.</p>
-
-      <!-- 정보 구분선 -->
-      <div class="divider"></div>
-
-      <!-- 연락처 리스트 -->
-      <ul class="info-list">
-        
-        <!-- 전화 정보 (기본/보조) -->
-        <li class="info-item">
-          <div class="info-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-            </svg>
-          </div>
-          <div class="info-details">
-            <span class="info-label">전화번호</span>
-            <a href="tel:031-444-8413" class="info-value font-en">031-444-8413</a>
-          </div>
-        </li>
-
-        <!-- 이메일 정보 -->
-        <li class="info-item">
-          <div class="info-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-            </svg>
-          </div>
-          <div class="info-details">
-            <span class="info-label">이메일</span>
-            <a href="mailto:pitca8413@gmail.com" class="info-value font-en">pitca8413@gmail.com</a>
-          </div>
-        </li>
-
-        <!-- 홈페이지 정보 -->
-        <li class="info-item">
-          <div class="info-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/>
-            </svg>
-          </div>
-          <div class="info-details">
-            <span class="info-label">웹사이트</span>
-            <a href="http://www.pitca.co.kr" target="_blank" rel="noopener noreferrer" class="info-value font-en">www.pitca.co.kr</a>
-          </div>
-        </li>
-
-        <!-- 카카오톡 정보 (플러스 보너스) -->
-        <li class="info-item">
-          <div class="info-icon">
-            <!-- 카카오톡 말풍선 느낌의 SVG 아이콘 구현 -->
-            <svg viewBox="0 0 24 24">
-              <path d="M12 3c-4.97 0-9 3.185-9 7.11 0 2.502 1.637 4.7 4.148 5.918l-.837 3.093c-.097.357.142.705.503.705.155 0 .304-.055.424-.155l3.524-2.333c.404.05.816.077 1.238.077 4.97 0 9-3.186 9-7.11C21 6.185 16.97 3 12 3z"/>
-            </svg>
-          </div>
-          <div class="info-details">
-            <span class="info-label">카카오톡 채널</span>
-            <span class="info-value" style="color: var(--text-main);"><span class="font-en">@</span>평촌아이티컴퓨터학원</span>
-          </div>
-        </li>
-      </ul>
-
-      <!-- 하단 퀵 액션 버튼군 -->
-      <div class="action-buttons">
-        <a href="tel:031-444-8413" class="btn btn-call">
-          <svg viewBox="0 0 24 24">
-            <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
-          </svg>
-          전화 걸기
-        </a>
-        <a href="http://www.pitca.co.kr" target="_blank" rel="noopener noreferrer" class="btn btn-web">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/>
-          </svg>
-          홈페이지
-        </a>
-      </div>
-    </div>
+    </article>
   </div>
 
+  <figure class="quote" id="quote" aria-live="polite" aria-busy="true">
+    <blockquote class="quote-message" id="quote-message">명언을 불러오는 중…</blockquote>
+    <figcaption class="quote-footer">
+      <cite class="quote-author" id="quote-author"></cite>
+      <button class="btn" id="quote-next" type="button">다른 명언</button>
+    </figcaption>
+  </figure>
+
+  <div class="actions">
+    <a class="btn primary" href="tel:01012345678">전화 걸기</a>
+    <button class="btn" id="copy-phone" type="button">번호 복사</button>
+    <span class="status" id="copy-status" role="status"></span>
+  </div>
+</main>
+
+<script>
+  const number = document.getElementById("phone-number");
+  const status = document.getElementById("copy-status");
+
+  function selectNumber() {
+    const range = document.createRange();
+    range.selectNodeContents(number);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    status.textContent = "번호를 선택했습니다. Ctrl+C로 복사하세요.";
+  }
+
+  document.getElementById("copy-phone").addEventListener("click", () => {
+    if (!navigator.clipboard) {
+      selectNumber();
+      return;
+    }
+    navigator.clipboard.writeText(number.textContent).then(
+      () => { status.textContent = "번호를 복사했습니다."; },
+      selectNumber
+    );
+  });
+
+  // 명언 API: { message, author, authorProfile }
+  const ADVICE_URL = "https://kradvice-pitca.vercel.app/api/advice";
+  const quoteBox = document.getElementById("quote");
+  const quoteMessage = document.getElementById("quote-message");
+  const quoteAuthor = document.getElementById("quote-author");
+  const quoteNext = document.getElementById("quote-next");
+
+  async function loadQuote() {
+    quoteBox.setAttribute("aria-busy", "true");
+    quoteNext.disabled = true;
+    try {
+      const response = await fetch(ADVICE_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error(response.status);
+      const data = await response.json();
+
+      quoteMessage.textContent = `“${data.message}”`;
+      quoteAuthor.replaceChildren();
+      const name = document.createElement("strong");
+      name.textContent = data.author;
+      quoteAuthor.append(name);
+      if (data.authorProfile) quoteAuthor.append(` · ${data.authorProfile}`);
+    } catch (error) {
+      quoteMessage.textContent = "명언을 불러오지 못했습니다. 잠시 후 다시 시도하세요.";
+      quoteAuthor.textContent = "";
+    } finally {
+      quoteBox.setAttribute("aria-busy", "false");
+      quoteNext.disabled = false;
+    }
+  }
+
+  quoteNext.addEventListener("click", loadQuote);
+  loadQuote();
+</script>
 </body>
 </html>
