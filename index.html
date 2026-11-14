@@ -266,6 +266,49 @@
     font-size: 14px;
   }
 
+  /* Share panel: opens under the action buttons */
+  .share {
+    display: grid;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: 6px;
+    background: var(--card);
+    animation: fade-up .3s ease-out both;
+  }
+  .share[hidden] { display: none; }
+  .share-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .share-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+  }
+  .share-grid .btn {
+    justify-content: center;
+    min-height: 40px;
+    padding-inline: 10px;
+    font-size: 14px;
+  }
+  .share-grid .btn[hidden] { display: none; }
+  .share-main {
+    grid-column: 1 / -1;
+    border-color: var(--brand);
+    color: var(--brand-text);
+  }
+  .share-note {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .share-note:empty { display: none; }
+  #share-toggle[aria-expanded="true"] {
+    border-color: var(--ink);
+  }
+
   /* Quote of the day: loaded from the advice API, sits under the card */
   .quote {
     display: grid;
@@ -309,7 +352,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .btn { transition: none; }
-    .sizer, .company img, .company span, .weather, .person, .phone, .quote, .actions { animation: none; }
+    .sizer, .company img, .company span, .weather, .person, .phone, .quote, .actions, .share { animation: none; }
     .card { transform: none; transition: none; }
     .card::after { display: none; }
   }
@@ -354,8 +397,24 @@
   <div class="actions">
     <a class="btn primary" href="tel:01012345678">전화 걸기</a>
     <button class="btn" id="copy-phone" type="button">번호 복사</button>
+    <button class="btn" id="share-toggle" type="button" aria-expanded="false" aria-controls="share-panel">공유하기</button>
     <span class="status" id="copy-status" role="status"></span>
   </div>
+
+  <section class="share" id="share-panel" aria-labelledby="share-title" hidden>
+    <h2 class="share-title" id="share-title">명함 공유하기</h2>
+    <div class="share-grid">
+      <button class="btn share-main" id="share-native" type="button" hidden>앱으로 공유 (카카오톡 등)</button>
+      <button class="btn" id="share-copy" type="button">링크 복사</button>
+      <a class="btn" id="share-email">이메일</a>
+      <a class="btn" id="share-sms" hidden>문자</a>
+      <a class="btn" id="share-facebook" target="_blank" rel="noopener">페이스북</a>
+      <a class="btn" id="share-x" target="_blank" rel="noopener">X (트위터)</a>
+      <a class="btn" id="share-naver" target="_blank" rel="noopener">네이버</a>
+      <a class="btn" id="share-line" target="_blank" rel="noopener">라인</a>
+    </div>
+    <p class="share-note" id="share-note" role="status"></p>
+  </section>
 </main>
 
 <script>
@@ -519,6 +578,60 @@
     if (event.pointerType !== "mouse") resetTilt();
   });
   card.addEventListener("pointercancel", resetTilt);
+
+  // 명함 공유: 별도 설정 없이 링크로 연결되는 방법만 사용합니다
+  const shareUrl = location.href.split("#")[0];
+  const shareTitle = "평촌아이티 홍길동 사원 명함";
+  const shareText = "평촌아이티 홍길동 사원의 온라인 명함입니다.";
+  const shareToggle = document.getElementById("share-toggle");
+  const sharePanel = document.getElementById("share-panel");
+  const shareNote = document.getElementById("share-note");
+  const enc = encodeURIComponent;
+  const isLocalFile = location.protocol === "file:";
+
+  const shareLinks = {
+    "share-email": `mailto:?subject=${enc(shareTitle)}&body=${enc(`${shareText}\n${shareUrl}`)}`,
+    "share-sms": `sms:?&body=${enc(`${shareText} ${shareUrl}`)}`,
+    "share-facebook": `https://www.facebook.com/sharer/sharer.php?u=${enc(shareUrl)}`,
+    "share-x": `https://x.com/intent/tweet?text=${enc(shareText)}&url=${enc(shareUrl)}`,
+    "share-naver": `https://share.naver.com/web/shareView?url=${enc(shareUrl)}&title=${enc(shareTitle)}`,
+    "share-line": `https://social-plugins.line.me/lineit/share?url=${enc(shareUrl)}`,
+  };
+  for (const [id, href] of Object.entries(shareLinks)) {
+    document.getElementById(id).href = href;
+  }
+
+  // 휴대폰 기본 공유 창(카카오톡·메시지 등)은 지원하는 브라우저에서만 보여 줍니다
+  if (navigator.share) document.getElementById("share-native").hidden = false;
+  // 문자는 휴대폰처럼 터치 화면에서만 보여 줍니다
+  if (window.matchMedia("(pointer: coarse)").matches) document.getElementById("share-sms").hidden = false;
+
+  shareToggle.addEventListener("click", () => {
+    const open = sharePanel.hidden;
+    sharePanel.hidden = !open;
+    shareToggle.setAttribute("aria-expanded", String(open));
+    shareNote.textContent = isLocalFile
+      ? "지금은 내 컴퓨터에서 연 페이지라 다른 사람이 이 주소를 열 수 없습니다. GitHub Pages 주소로 연 뒤 공유하세요."
+      : "";
+  });
+
+  document.getElementById("share-native").addEventListener("click", async () => {
+    try {
+      await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+    } catch (error) {
+      // 사용자가 공유 창을 닫은 경우는 그냥 넘어갑니다
+      if (error.name !== "AbortError") shareNote.textContent = "공유 창을 열지 못했습니다. 링크 복사를 이용하세요.";
+    }
+  });
+
+  document.getElementById("share-copy").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      shareNote.textContent = "명함 링크를 복사했습니다. 원하는 곳에 붙여 넣으세요.";
+    } catch (error) {
+      window.prompt("아래 링크를 복사하세요.", shareUrl);
+    }
+  });
 </script>
 </body>
 </html>
