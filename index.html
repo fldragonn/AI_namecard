@@ -69,7 +69,10 @@
     min-width: 0;
   }
 
-  .sizer { container-type: inline-size; }
+  .sizer {
+    container-type: inline-size;
+    perspective: 900px;
+  }
 
   /* Korean standard card size: 90 x 50 mm */
   .card {
@@ -83,6 +86,59 @@
     border-radius: 1.2cqw;
     box-shadow: var(--shadow);
   }
+
+  /* Kinetic: 3D tilt toward the pointer, a glare that follows it, and floating content layers */
+  .card {
+    --rx: 0deg;
+    --ry: 0deg;
+    --gx: 50%;
+    --gy: 50%;
+    --glare: 0;
+    position: relative;
+    transform: rotateX(var(--rx)) rotateY(var(--ry));
+    transform-style: preserve-3d;
+    transition: transform .6s cubic-bezier(.2, .9, .25, 1.25), box-shadow .6s ease;
+    will-change: transform;
+  }
+  .card.is-tilting {
+    transition: transform .1s linear, box-shadow .3s ease;
+    box-shadow: 0 2px 4px rgb(60 20 28 / .10), 0 30px 60px -22px rgb(60 20 28 / .40);
+  }
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    /* light where the pointer is, a faint shade away from it */
+    background: radial-gradient(circle at var(--gx) var(--gy),
+      rgb(255 255 255 / .30), rgb(255 255 255 / 0) 35%, rgb(60 20 28 / .09) 100%);
+    opacity: var(--glare);
+    transition: opacity .4s ease;
+    pointer-events: none;
+  }
+  .card-top, .details { transform: translateZ(28px); }
+
+  /* Entrance: card rises in, then the content and the panels below follow */
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(28px) rotateX(14deg); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes pop-in {
+    0% { opacity: 0; transform: scale(.4) rotate(-12deg); }
+    70% { opacity: 1; transform: scale(1.08) rotate(2deg); }
+    100% { transform: none; }
+  }
+  .sizer { animation: rise-in .9s cubic-bezier(.2, .9, .25, 1) both; transform-style: preserve-3d; }
+  .company img { animation: pop-in .7s .35s cubic-bezier(.2, .9, .3, 1.2) both; }
+  .company span, .weather { animation: fade-up .6s .5s ease-out both; }
+  .person { animation: fade-up .6s .6s ease-out both; }
+  .phone { animation: fade-up .6s .7s ease-out both; }
+  .quote { animation: fade-up .7s .8s ease-out both; }
+  .actions { animation: fade-up .7s .95s ease-out both; }
 
   .company {
     display: flex;
@@ -253,6 +309,9 @@
 
   @media (prefers-reduced-motion: reduce) {
     .btn { transition: none; }
+    .sizer, .company img, .company span, .weather, .person, .phone, .quote, .actions { animation: none; }
+    .card { transform: none; transition: none; }
+    .card::after { display: none; }
   }
 </style>
 </head>
@@ -422,6 +481,44 @@
   }
 
   loadWeather();
+
+  // 키네틱 효과: 포인터 위치에 따라 명함이 기울고 빛이 따라다닙니다
+  const card = document.querySelector(".card");
+  const MAX_TILT = 10; // 최대 기울기(도)
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let frame = 0;
+
+  function tilt(event) {
+    if (reduceMotion.matches) return;
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;   // 0(왼쪽) ~ 1(오른쪽)
+    const y = (event.clientY - rect.top) / rect.height;   // 0(위) ~ 1(아래)
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      card.classList.add("is-tilting");
+      card.style.setProperty("--ry", `${(x - 0.5) * 2 * MAX_TILT}deg`);
+      card.style.setProperty("--rx", `${(0.5 - y) * 2 * MAX_TILT}deg`);
+      card.style.setProperty("--gx", `${x * 100}%`);
+      card.style.setProperty("--gy", `${y * 100}%`);
+      card.style.setProperty("--glare", "1");
+    });
+  }
+
+  function resetTilt() {
+    cancelAnimationFrame(frame);
+    card.classList.remove("is-tilting");
+    card.style.setProperty("--rx", "0deg");
+    card.style.setProperty("--ry", "0deg");
+    card.style.setProperty("--glare", "0");
+  }
+
+  card.addEventListener("pointermove", tilt);
+  card.addEventListener("pointerdown", tilt);
+  card.addEventListener("pointerleave", resetTilt);
+  card.addEventListener("pointerup", (event) => {
+    if (event.pointerType !== "mouse") resetTilt();
+  });
+  card.addEventListener("pointercancel", resetTilt);
 </script>
 </body>
 </html>
